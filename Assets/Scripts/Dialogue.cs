@@ -8,12 +8,15 @@ public class Dialogue : MonoBehaviour
     private bool isPlayerInRange;
     private bool didDialogueStart;
     private int lineIndex;
+    
 
     private float typingTime = 0.05f;
 
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TMP_Text dialogueText;
     [SerializeField, TextArea(4, 6)] private string[] dialogueLines;
+
+    
 
     void Update()
     {
@@ -35,6 +38,7 @@ public class Dialogue : MonoBehaviour
             }
             
         }
+        
     }
 
     private void StartDialogue()
@@ -90,4 +94,5 @@ public class Dialogue : MonoBehaviour
             Debug.Log("Fin del dialogo");
         }
     }
+
 }
