@@ -10,7 +10,7 @@ public class PuertaGeneral : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.C) && enZona == true)
+        if(Input.GetButtonDown("Submit") && enZona == true)
         {
             active = !active;
 

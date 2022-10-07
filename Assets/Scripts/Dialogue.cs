@@ -20,7 +20,7 @@ public class Dialogue : MonoBehaviour
 
     void Update()
     {
-        if(isPlayerInRange && Input.GetButtonDown("Fire1"))
+        if(isPlayerInRange && Input.GetButtonDown("Submit"))
         {
             if(!didDialogueStart)
             {
