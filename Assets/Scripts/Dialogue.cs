@@ -13,6 +13,7 @@ public class Dialogue : MonoBehaviour
     private float typingTime = 0.05f;
 
     [SerializeField] private GameObject dialoguePanel;
+    [SerializeField] private GameObject dialogueMark;
     [SerializeField] private TMP_Text dialogueText;
     [SerializeField, TextArea(4, 6)] private string[] dialogueLines;
 
@@ -82,6 +83,7 @@ public class Dialogue : MonoBehaviour
         if(collision.gameObject.CompareTag("Player"))
         {
             isPlayerInRange = true;
+            dialogueMark.SetActive(true);
             Debug.Log("Inicio dialogo");
         }
     }
@@ -91,6 +93,7 @@ public class Dialogue : MonoBehaviour
         if(collision.gameObject.CompareTag("Player"))
         {
             isPlayerInRange = false;
+            dialogueMark.SetActive(false);
             Debug.Log("Fin del dialogo");
         }
     }

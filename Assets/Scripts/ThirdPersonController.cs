@@ -5,6 +5,7 @@ using UnityEngine;
 public class ThirdPersonController : MonoBehaviour
 {
     private CharacterController controller;
+    private Animator anim;
     public Transform cam;
     public Transform LookAtTransform;
     private Vector3 playerVelocity;
@@ -27,6 +28,7 @@ public class ThirdPersonController : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        anim = GetComponentInChildren<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
     }
    
@@ -39,8 +41,8 @@ public class ThirdPersonController : MonoBehaviour
     void Update()
     {
         //Movement();
-        //MovementTPS();
-        MovementTPS2();
+        MovementTPS();
+        //MovementTPS2();
 
         Jump();
     }
@@ -65,7 +67,11 @@ public class ThirdPersonController : MonoBehaviour
     //Movimiento TPS con free look camara
     void MovementTPS()
     {
-         Vector3 move = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+        float z = Input.GetAxisRaw("Vertical");
+        anim.SetFloat("VelZ", z);
+        float x = Input.GetAxisRaw("Horizontal");
+        anim.SetFloat("VelX", x);
+        Vector3 move = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
 
         if(move != Vector3.zero)
         {
@@ -123,7 +129,10 @@ public class ThirdPersonController : MonoBehaviour
     void Jump()
     {
         //isGrounded = controller.isGrounded;
-        isGrounded = Physics.CheckSphere(groundSensor.position, sensorRadius, ground);        
+        isGrounded = Physics.CheckSphere(groundSensor.position, sensorRadius, ground); 
+
+        anim.SetBool("Jump",!isGrounded);
+               
         if(isGrounded && playerVelocity.y < 0)
         {
             playerVelocity.y = 0;
