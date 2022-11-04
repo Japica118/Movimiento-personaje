@@ -4,18 +4,20 @@ using UnityEngine;
 
 public class ThirdPersonController : MonoBehaviour
 {
-    private CharacterController controller;
+    [SerializeField]private CharacterController controller;
     private Animator anim;
-    public Transform cam;
+    [SerializeField]private Transform cam;
     public Transform LookAtTransform;
     private Vector3 playerVelocity;
     public Transform groundSensor;
     public LayerMask ground;
     public float sensorRadius = 0.1f;
+    [Header("Fisicas")]
     public float speed = 5f;
     public float jumpForce = 20f;
     public float jumpHeight = 1f;
     private float gravity = -9.81f;
+    [Header("Sensor Suelo")]
     public bool isGrounded;
     private float turnSmoothVelocity;
     public float turnSmoothTime = 0.1f;
@@ -25,11 +27,13 @@ public class ThirdPersonController : MonoBehaviour
 
     public GameObject[] cameras;
 
+    public LayerMask rayLayer;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
     }
    
     void Awake()
@@ -45,6 +49,41 @@ public class ThirdPersonController : MonoBehaviour
         //MovementTPS2();
 
         Jump();
+
+        RaycastHit hit;
+        if(Physics.Raycast(transform.position, transform.forward, out hit, 20f, rayLayer))
+        {
+            Vector3 hitPosition = hit.point;
+            
+            float hitDistance = hit.distance;
+
+            string hitName = hit.transform.name;
+
+            //Animator hitAnimator = hit.transform.GameObject.GetComponent<Animator>();
+
+            //hit.transform.GameObject.GetComponent<ScriptRandom>().FunctionRandom();
+
+            Debug.DrawRay(transform.position, transform.forward * 20f, Color.blue);
+
+            Debug.Log("Posicion impacto:" + hitPosition + "Distancia impacto:" + hitDistance + "Nombre objeto:" + hitName);
+        }
+        else
+        {
+            Debug.DrawRay(transform.position, transform.forward * 20f, Color.red);
+        }
+
+        if(Input.GetButtonDown("Fire1"))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit2;
+            if(Physics.Raycast(ray, out hit2))
+            {
+                Debug.Log(hit2.point);
+                transform.position = new Vector3(hit2.point.x, transform.position.y, hit2.point.z);
+            } 
+        }
+
+        
     }
 
     void Movement()
@@ -129,7 +168,18 @@ public class ThirdPersonController : MonoBehaviour
     void Jump()
     {
         //isGrounded = controller.isGrounded;
-        isGrounded = Physics.CheckSphere(groundSensor.position, sensorRadius, ground); 
+        //isGrounded = Physics.CheckSphere(groundSensor.position, sensorRadius, ground);
+        //isGrounded = Physics.Raycast(groundSensor.position, Vector3.down, sensorRadius, ground);
+        if(Physics.Raycast(groundSensor.position, Vector3.down, sensorRadius, ground))
+        {
+            isGrounded = true;
+            Debug.DrawRay(groundSensor.position, Vector3.down * sensorRadius, Color.blue);
+        }
+        else
+        {
+            isGrounded = false;
+            Debug.DrawRay(groundSensor.position, Vector3.down * sensorRadius, Color.red);
+        }
 
         anim.SetBool("Jump",!isGrounded);
                
@@ -148,4 +198,15 @@ public class ThirdPersonController : MonoBehaviour
 
         controller.Move(playerVelocity * Time.deltaTime);
     }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawRay(transform.position, transform.forward * 20);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(groundSensor.position, sensorRadius);
+    }
+        
+    
 }
